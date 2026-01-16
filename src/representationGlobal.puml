@@ -1,0 +1,66 @@
+@startuml
+left to right direction
+
+' -------------------
+' Acteurs internes
+' -------------------
+actor "Employé administratif\n(Opérateur colis)" as OC
+actor "Employé administratif\n(Opérateur stock)" as OS
+actor "Administrateur" as ADM
+
+rectangle "Acteurs internes" as Internes #LightBlue {
+  note right
+    Regroupe les employés administratifs et l'administrateur
+  end note
+}
+
+' -------------------
+' Système
+' -------------------
+rectangle "Système de gestion des colis DIGICHEESE" as SYS #LightYellow {
+  
+  rectangle "Gestion des commandes et colis" as CMD {
+    rectangle "Préparer & traiter commande" as PREP
+    rectangle "Expédier colis" as EXP
+  }
+
+  rectangle "Gestion clients" as CLIENTSYS
+  rectangle "Gestion des stocks" as STOCK
+  rectangle "Statistiques et mailing" as MAILSYS
+  rectangle "Administration système" as ADMINSYS
+  rectangle "Gestion des Emplacement" as EMP
+}
+
+' -------------------
+' Acteurs externes
+' -------------------
+actor "Client final" as CLIENT
+actor "La Poste" as LP
+
+rectangle "Acteurs externes" as Externes #LightGreen {
+  note right
+    Regroupe les acteurs externes (Client, La Poste)
+  end note
+}
+
+' -------------------
+' Interactions externes
+' -------------------
+CLIENT --> LP : Envoie et reçoit colis
+LP <-- EXP : Livraison colis, numéro de suivi
+
+' -------------------
+' Interactions internes
+' -------------------
+OC --> PREP
+OC --> EXP
+OC --> CLIENTSYS
+OC --> MAILSYS
+
+OS --> STOCK
+OS --> CLIENTSYS
+OS --> MAILSYS
+
+ADM --> ADMINSYS
+
+@enduml

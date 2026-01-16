@@ -1,0 +1,90 @@
+@startuml
+top to bottom direction
+skinparam packageStyle rectangle
+
+' ===================
+' Acteurs internes
+' ===================
+package "Acteurs internes" {
+  actor "Employé administratif" as EMP
+  actor "Opérateur colis" as OC
+  actor "Opérateur stock" as OS
+  actor "Administrateur" as ADM
+
+  OC -|> EMP
+  OS -|> EMP
+}
+
+' ===================
+' Système central
+' ===================
+package "Système de gestion des colis DIGICHEESE" {
+
+  usecase "S’authentifier / Se connecter" as UC_LOGIN
+
+  usecase "Gérer commandes" as UC_CMD
+  usecase "Gestion de colis" as UC_PREP
+  usecase "Calculer conditionnement\net affranchissement" as UC_CALC
+  usecase "Gérer clients" as UC_CLIENT
+  usecase "Gérer stocks\net inventaires" as UC_STOCK
+  usecase "Statistiques\net mailing" as UC_MAIL
+  usecase "Administration système" as UC_ADMIN
+  usecase "Gestion des emplacements" as UC_EMP
+
+  ' Relations include / extend
+  UC_PREP ..> UC_CALC : <<include>>
+  UC_MAIL ..> UC_CLIENT : <<include>>
+
+  UC_ADMIN ..> UC_STOCK : <<extend>>
+  UC_ADMIN ..> UC_EMP : <<extend>>
+  UC_ADMIN ..> UC_CMD : <<extend>>
+
+  ' Authentification comme pré-requis
+  UC_CMD ..> UC_LOGIN : <<include>>
+  UC_PREP ..> UC_LOGIN : <<include>>
+  UC_CLIENT ..> UC_LOGIN : <<include>>
+  UC_STOCK ..> UC_LOGIN : <<include>>
+  UC_MAIL ..> UC_LOGIN : <<include>>
+  UC_ADMIN ..> UC_LOGIN : <<include>>
+  UC_EMP ..> UC_LOGIN : <<include>>
+}
+
+' ===================
+' Acteurs externes
+' ===================
+package "Acteurs externes" {
+  actor "Client final" as CLIENT
+  actor "La Poste" as LP
+}
+
+' ===================
+' Liaisons internes
+' ===================
+OC --> UC_CMD
+OC --> UC_PREP
+OC --> UC_MAIL
+
+OS --> UC_STOCK
+
+EMP --> UC_CLIENT
+EMP --> UC_EMP
+
+ADM --> UC_ADMIN
+ADM --> UC_MAIL
+
+' ===================
+' Flux logistiques (hors système)
+' ===================
+OC --> LP : Dépôt colis
+LP --> CLIENT : Livraison
+
+CLIENT --> LP : Retour / envoi colis
+LP --> OC : Acheminement vers DIGICHEESE
+
+' ===================
+' Alignement forcé
+' ===================
+EMP -[hidden]-> UC_CMD
+UC_CMD -[hidden]-> CLIENT
+
+@enduml

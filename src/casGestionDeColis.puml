@@ -1,0 +1,76 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' ===================
+' Acteurs
+' ===================
+actor "Employé administratif" as EMP
+actor "Opérateur colis" as OC
+actor "Opérateur stock" as OS
+
+OC -|> EMP
+OS -|> EMP
+
+' ===================
+' Système – Gestion des colis
+' ===================
+package "Gestion des colis" {
+
+  usecase "UC01 – Gérer clients" as UC_CLIENT
+  usecase "UC02 – Consulter fiche client" as UC_FICHE
+
+  usecase "UC03 – Gérer commandes" as UC_CMD
+  usecase "UC04 – Suivre commandes en cours" as UC_SUIVI
+  usecase "UC05 – Historiser mouvements de colis" as UC_HISTO
+
+  usecase "UC06 – Calculer conditionnement" as UC_COND
+  usecase "UC07 – Calculer affranchissement" as UC_AFF
+  usecase "UC08 – Gérer emballages" as UC_EMB
+  usecase "UC09 – Relation poids / colis" as UC_POIDS
+  usecase "UC10 – Relation poids / vignette" as UC_VIGNETTE
+
+  usecase "UC11 – Gérer stocks de goodies" as UC_STOCK
+  usecase "UC12 – Gérer emplacements" as UC_EMPLACEMENT
+
+  usecase "UC13 – Visualiser statistiques" as UC_STATS
+  usecase "UC14 – Générer impressions" as UC_PRINT
+  usecase "UC15 – Générer mailing client" as UC_MAILING
+  usecase "UC16 – Envoyer email personnalisé" as UC_EMAIL
+}
+
+' ===================
+' Relations include / extend
+' ===================
+UC_CLIENT ..> UC_FICHE : include
+
+UC_CMD ..> UC_SUIVI : include
+UC_CMD ..> UC_HISTO : include
+
+UC_COND ..> UC_AFF : include
+UC_COND ..> UC_EMB : include
+UC_COND ..> UC_POIDS : include
+UC_AFF ..> UC_VIGNETTE : include
+
+UC_STATS ..> UC_CMD : include
+
+UC_EMAIL ..> UC_MAILING : extend
+UC_PRINT ..> UC_STATS : extend
+
+' ===================
+' Associations acteurs
+' ===================
+OC --> UC_CLIENT
+OC --> UC_CMD
+OC --> UC_COND
+OC --> UC_STATS
+OC --> UC_MAILING
+OC --> UC_EMAIL
+OC --> UC_PRINT
+
+OS --> UC_STOCK
+OS --> UC_EMPLACEMENT
+OS --> UC_EMB
+
+@enduml

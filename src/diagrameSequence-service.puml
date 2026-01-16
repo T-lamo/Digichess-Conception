@@ -1,0 +1,119 @@
+title UC01 – Gestion des colis
+
+actor "Client final" as Client
+actor "La Poste" as Poste
+
+participant "Opérateur colis" as Operateur
+participant "Opérateur stock" as OpStock
+
+participant "Service Client" as SClient <<service>>
+participant "Service Commande" as SCmd <<service>>
+participant "Service Stock" as SStock <<service>>
+participant "Service Conditionnement" as SCond <<service>>
+participant "Service Affranchissement" as SAff <<service>>
+participant "Service Notification" as SNotif <<service>>
+participant "Service Impression" as SPrint <<service>>
+participant "Service Paramétrage" as SParam <<service>>
+
+note left of Operateur
+Prérequis : L'opérateur reçoit manuellement
+le colis de la Poste avant de commencer
+le traitement des dossiers.
+end note
+
+== Réception du courrier ==
+Client --> Poste: 0. Courrier reçu
+
+Poste --> Operateur: 1. Courrier reçu
+activate Operateur
+
+Operateur -> Operateur: 2. vérifierDossierManuellement()
+note right of Operateur
+Cette étape est réalisée manuellement : 
+l'opérateur contrôle que le dossier contient 
+les points, le choix des goodies et le chèque.
+end note
+
+alt Dossier complet
+    Operateur -> SClient: 3. rechercherClient()
+    activate SClient
+
+    alt Client existant
+        SClient --> Operateur: 4. clientTrouve
+    else Nouveau client
+        Operateur -> SClient: 5. creerClient()
+        SClient --> Operateur: 6. clientCree
+    end
+    deactivate SClient
+
+    Operateur -> SCmd: 7. creerCommande()
+    activate SCmd
+    SCmd --> Operateur: 8. idCommande
+    deactivate SCmd
+
+    Operateur -> SCmd: 9. ajouterArticles()
+    activate SCmd
+    SCmd --> Operateur: 10. articlesAjoutes
+    deactivate SCmd
+
+    Operateur -> SStock: 11. verifierDisponibilite()
+    activate SStock
+    SStock --> Operateur: 12. stockDisponible
+    deactivate SStock
+
+    alt Stock disponible
+        Operateur -> SParam: 13. verifierParametrage()
+        activate SParam
+        SParam --> Operateur: 14. parametresOK
+        deactivate SParam
+
+        Operateur -> SCond: 15. calculerConditionnement()
+        activate SCond
+        SCond --> Operateur: 16. emballage, poidsTotal
+        deactivate SCond
+
+        Operateur -> SAff: 17. calculerAffranchissement()
+        activate SAff
+        SAff --> Operateur: 18. tarif, vignette
+        deactivate SAff
+
+        Operateur -> SCmd: 19. validerCommande()
+        activate SCmd
+        SCmd --> Operateur: 20. commandeValidee
+        deactivate SCmd
+
+        Operateur -> SStock: 21. mettreAJourStock()
+        activate SStock
+        SStock --> Operateur: 22. stockMisAJour
+        deactivate SStock
+
+        Operateur -> Operateur: 23. deposerColisPourExpedition()
+        Operateur --> Operateur: 24. numeroSuivi
+
+        Operateur -> SCmd: 25. enregistrerSuivi()
+        activate SCmd
+        SCmd --> Operateur: 26. suiviEnregistre
+        deactivate SCmd
+
+        alt Email client disponible
+            Operateur -> SNotif: 27. envoyerEmail()
+            activate SNotif
+            SNotif --> Client: 28. emailEnvoye
+            deactivate SNotif
+        end
+
+        Operateur -> SPrint: 29. genererImpressions()
+        activate SPrint
+        SPrint --> Operateur: 30. impressionsOK
+        deactivate SPrint
+
+    else Stock insuffisant
+        Operateur -> SCmd: 31. mettreCommandeEnAttente()
+    end
+
+else Dossier incomplet
+    Operateur -> SCmd: 32. mettreCourrierEnAttente()
+end
+
+deactivate Operateur
+@enduml

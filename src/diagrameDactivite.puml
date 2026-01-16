@@ -1,0 +1,71 @@
+@startuml
+title Diagramme d'activité - Gestion des colis DIGICHEESE
+
+|Client|
+start
+:Envoyer courrier (points + goodies + chèque);
+
+|La Poste|
+:Transmettre courrier à la fromagerie;
+
+|Opérateur colis|
+:Réceptionner le courrier client;
+:Vérifier la présence des points, goodies et chèque;
+
+if (Dossier complet ?) then (Oui)
+    :Rechercher le client;
+
+    if (Client existant ?) then (Oui)
+        :Afficher la fiche client;
+    else (Non)
+        :Créer une fiche client;
+    endif
+
+    :Créer une nouvelle commande;
+    :Saisir les goodies et leurs quantités;
+
+|Opérateur stock|
+:Vérifier la disponibilité des stocks;
+
+if (Stock disponible ?) then (Oui)
+    note right
+        Précondition : Le système doit être
+        paramétré par l'administrateur
+        (emballages, poids, tarifs)
+    end note
+    :Calculer le conditionnement;
+    :Calculer le poids total;
+    :Calculer les frais d'affranchissement;
+
+else (Non)
+    |Opérateur colis|
+    :Mettre la commande en attente;
+    stop
+endif
+
+|Opérateur colis|
+:Valider la commande;
+:Préparer le colis;
+
+|La Poste|
+:Expédier le colis;
+
+|Opérateur colis|
+:Enregistrer le numéro de suivi;
+:Mettre à jour l'état de la commande;
+:Historiser la commande;
+
+if (Email client disponible ?) then (Oui)
+    :Envoyer communication client (confirmation / suivi);
+else (Non)
+endif
+    
+
+:Générer les impressions (listes, commandes, statistiques);
+else (Non)
+:Mettre le dossier en attente;
+stop
+endif
+
+stop
+@enduml

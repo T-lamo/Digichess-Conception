@@ -1,0 +1,185 @@
+🧭 Démarche complète pour un projet de conception UML
+🟢 Étape 1 — Comprendre le cas (lecture active)
+
+🎯 Objectif : comprendre le problème, pas la solution.
+
+À faire :
+
+Lire l’énoncé plusieurs fois
+
+Surligner :
+
+acteurs
+
+actions
+
+règles métier
+
+contraintes
+
+Repérer :
+
+ce que le système doit faire
+
+ce qu’il ne fait pas
+
+👉 À la fin, tu dois pouvoir expliquer le cas avec tes mots.
+
+🟢 Étape 2 — Identifier les acteurs
+
+🎯 Objectif : savoir qui interagit avec le système.
+
+Acteurs :
+
+humains (client, admin…)
+
+systèmes externes (paiement, GPS…)
+
+⚠️ Un acteur :
+
+est externe
+
+n’est pas une classe
+
+📌 Livrable :
+
+Liste des acteurs + rôle de chacun
+
+🟢 Étape 3 — Définir les grandes fonctionnalités
+
+🎯 Objectif : définir ce que le système offre.
+
+Méthode :
+
+Pour chaque acteur :
+➝ “Que peut-il faire avec le système ?”
+
+📌 Livrable :
+
+Liste des grandes fonctions (verbes à l’infinitif)
+
+🟢 Étape 4 — Schéma global du système (vue macro)
+
+🎯 Objectif : donner une vue d’ensemble.
+
+Contenu :
+
+le système (1 bloc)
+
+les acteurs autour
+
+les grandes fonctionnalités
+
+interactions simples
+
+📌 Diagramme :
+
+schéma fonctionnel global
+
+pas encore UML strict
+
+🟢 Étape 5 — Diagrammes de cas d’utilisation (UCs)
+
+🎯 Objectif : formaliser les fonctionnalités.
+
+À faire :
+
+créer les UC
+
+relier acteurs ↔ UC
+
+utiliser <<include>>, <<extend>> si nécessaire
+
+📌 Diagramme UML :
+
+Diagramme de cas d’utilisation
+
+🟢 Étape 6 — Scénarios textuels
+
+🎯 Objectif : décrire le déroulement réel.
+
+Pour chaque UC important :
+
+scénario nominal
+
+variantes / erreurs
+
+📌 Livrable :
+
+Description textuelle structurée
+
+🟢 Étape 7 — Diagrammes de séquence
+
+🎯 Objectif : montrer l’ordre des interactions.
+
+Contenu :
+
+acteurs
+
+système
+
+objets principaux
+
+messages échangés
+
+📌 UML :
+
+Diagramme de séquence
+
+🟢 Étape 8 — Diagrammes d’activité
+
+🎯 Objectif : montrer le flux de traitement.
+
+Contenu :
+
+décisions
+
+parallélisme
+
+début / fin
+
+📌 UML :
+
+Diagramme d’activité
+
+🟢 Étape 9 — Diagramme de classes
+
+🎯 Objectif : modéliser les données et relations.
+
+À partir de :
+
+UC
+
+séquences
+
+règles métier
+
+Contenu :
+
+classes
+
+attributs
+
+associations
+
+multiplicités
+
+📌 UML :
+
+Diagramme de classes
+
+🟢 Étape 10 — Maquettes (IHM)
+
+🎯 Objectif : visualiser l’interface future.
+
+Contenu :
+
+écrans principaux
+
+navigation
+
+cinématique
+
+📌 Livrable :
+
+Wireframes / mockups

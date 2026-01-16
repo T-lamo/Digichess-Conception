@@ -1,0 +1,108 @@
+@startuml
+title Diagramme de séquence – UC01 Gestion des colis (refactorisé)
+
+actor "Client final" as Client
+actor "La Poste" as Poste
+
+participant "Opérateur colis" as Operateur
+participant "Opérateur stock" as Stock
+participant "Service Client" as SClient
+participant "Service Commande" as SCmd
+participant "Service Stock" as SStock
+participant "Service Conditionnement" as SCond
+participant "Service Affranchissement" as SAff
+participant "Service Notification" as SNotif
+participant "Service Impression" as SPrint
+participant "Administrateur système" as Admin
+
+== Réception du courrier ==
+Poste -> Operateur: remettreCourrier(points, goodies, cheque)
+activate Operateur
+
+Operateur -> SCmd: verifierDossier(points, goodies, cheque)
+activate SCmd
+SCmd --> Operateur: dossierValide
+deactivate SCmd
+
+alt Dossier complet
+
+    Operateur -> SClient: rechercherClient(donneesClient)
+    activate SClient
+
+    alt Client existant
+        SClient --> Operateur: clientTrouve
+    else Nouveau client
+        SClient --> Operateur: clientInexistant
+        Operateur -> SClient: creerClient(donneesClient)
+        SClient --> Operateur: clientCree
+    end
+    deactivate SClient
+
+    Operateur -> SCmd: creerCommande(idClient)
+    activate SCmd
+    SCmd --> Operateur: idCommande
+
+    Operateur -> SCmd: ajouterArticles(idCommande, goodies)
+    SCmd --> Operateur: articlesAjoutes
+    deactivate SCmd
+
+    Operateur -> SStock: verifierDisponibilite(idCommande)
+    activate SStock
+    SStock --> Operateur: stockDisponible
+    deactivate SStock
+
+    alt Stock disponible
+
+        Admin -> Admin: verifierParametrage()
+        Admin --> Operateur: parametresOK
+
+        Operateur -> SCond: calculerConditionnement(idCommande)
+        activate SCond
+        SCond --> Operateur: emballageChoisi, poidsTotal
+        deactivate SCond
+
+        Operateur -> SAff: calculerAffranchissement(poidsTotal)
+        activate SAff
+        SAff --> Operateur: tarif, vignette
+        deactivate SAff
+
+        Operateur -> SCmd: validerCommande(idCommande)
+        activate SCmd
+        SCmd --> Operateur: commandeValidee
+        deactivate SCmd
+
+        Operateur -> SStock: mettreAJourStock(idCommande)
+        activate SStock
+        SStock --> Operateur: stockMisAJour
+        deactivate SStock
+
+        Operateur -> Poste: deposerColis(idCommande)
+        Poste --> Operateur: numeroSuivi
+
+        Operateur -> SCmd: enregistrerSuivi(idCommande, numeroSuivi)
+        activate SCmd
+        SCmd --> Operateur: suiviEnregistre
+        deactivate SCmd
+
+        alt Email client disponible
+            Operateur -> SNotif: envoyerEmailConfirmation(idCommande)
+            activate SNotif
+            SNotif --> Operateur: emailEnvoye
+            deactivate SNotif
+        end
+
+        Operateur -> SPrint: genererDocuments(idCommande)
+        activate SPrint
+        SPrint --> Operateur: impressionsGenerees
+        deactivate SPrint
+
+    else Stock insuffisant
+        Operateur -> SCmd: mettreCommandeEnAttente(idCommande)
+    end
+
+else Dossier incomplet
+    Operateur -> SCmd: mettreCourrierEnAttente()
+end
+
+deactivate Operateur
+@enduml
